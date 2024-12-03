@@ -47,19 +47,7 @@ public class Main {
             LexicalAnalyzer first = new LexicalAnalyzer(expression);
             // get tokens
 
-            // first.printTokens();
-
-            // ArrayList<Token> list = first.getTokenList();
-            // for (int i = 0; i < list.size(); i++) {
-            // System.out.println(list.get(i).getType());
-            //
-            // }
-            // System.out.println("+++++++++++++");
-            //
-            // for (int i = 0; i < list.size(); i++) {
-            // System.out.println(first.getToken().getType());
-            //
-            // }
+            first.printTokens();
 
             // Parser creation
             Parser parser = new Parser(first);

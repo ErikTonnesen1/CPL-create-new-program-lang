@@ -92,7 +92,7 @@ public class Parser {
             int l = number();
             return new NumNode(l);
         } else {
-            throw new RuntimeException("Syntax error: unexpected character at" + currentToken.getRowNumber() + ":"
+            throw new RuntimeException("Syntax error: unexpected character at " + currentToken.getRowNumber() + ":"
                     + currentToken.getColNumber());
         }
 

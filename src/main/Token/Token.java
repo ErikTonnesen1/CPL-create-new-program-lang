@@ -5,7 +5,8 @@ public class Token {
 
     // enumerated type
     public enum Type {
-        ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, LEFT_PARENTH, RIGHT_PARENTH, INT_LIT, EOS_TOKEN
+        ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, LEFT_PARENTH, RIGHT_PARENTH, INT_LIT, ID, ASSIGN, DISPLAY,
+        INPUT, EOS_TOKEN
     };
 
     private Type type;

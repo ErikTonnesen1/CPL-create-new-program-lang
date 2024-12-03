@@ -65,9 +65,26 @@ public class LexicalAnalyzer {
                 }
                 // if not a digit, must be an operator or symbol
             } else if (!Character.isDigit(this.source.charAt(i))) {
-                String nonIntToken = Character.toString(this.source.charAt(i));
+                // multi length string = identifier or keyword
+                // 1. find full string
+                // 2. if string.equals(assign input, display) = keyword
+                if (i != this.source.length() - 1 && !Character.isDigit(this.source.charAt(i + 1))) {
+                    int findWholeString = i;
+                    while ((findWholeString + 1) <= this.source.length() - 1
+                            && !Character.isDigit(this.source.charAt(findWholeString))
+                            && this.source.charAt(findWholeString) != ' ') {
+                        findWholeString++;
+                    }
+                    String wholeString = this.source.substring(i, findWholeString);
+                    i = findWholeString - 1;
+                    System.out.println(wholeString);
+                    createToken(wholeString, 0, i);
 
-                createToken(nonIntToken, 0, i);
+                } else {
+                    String nonIntToken = Character.toString(this.source.charAt(i));
+
+                    createToken(nonIntToken, 0, i);
+                }
             }
         }
         // end of expression
@@ -106,6 +123,10 @@ public class LexicalAnalyzer {
                 Token token = new Token(Lexeme, Token.Type.RIGHT_PARENTH, row, column);
                 tokens.add(token);
 
+            } else if (Character.isLetter(Lexeme.toCharArray()[0])) {
+                Token token = new Token(Lexeme, Token.Type.ID, row, column);
+                tokens.add(token);
+
             } else {
                 // throw exception
                 throw new IllegalArgumentException(
@@ -114,6 +135,26 @@ public class LexicalAnalyzer {
         } else if (isInteger(Lexeme)) {
             Token token = new Token(Lexeme, Token.Type.INT_LIT, row, column);
             tokens.add(token);
+        } else if (Lexeme.length() >= 2) {
+            // statements tokens
+            switch (Lexeme.toLowerCase()) {
+                case "assign":
+                    Token assignToken = new Token(Lexeme, Token.Type.ASSIGN, row, column);
+                    tokens.add(assignToken);
+                    break;
+                case "input":
+                    Token inputToken = new Token(Lexeme, Token.Type.INPUT, row, column);
+                    tokens.add(inputToken);
+                    break;
+                case "display":
+                    Token displayToken = new Token(Lexeme, Token.Type.DISPLAY, row, column);
+                    tokens.add(displayToken);
+                    break;
+                default:
+                    Token token = new Token(Lexeme, Token.Type.ID, row, column);
+                    tokens.add(token);
+                    break;
+            }
         } else if (Lexeme.equals("EOS")) {
             Token token = new Token("EOS", Token.Type.EOS_TOKEN, row, column);
             tokens.add(token);
