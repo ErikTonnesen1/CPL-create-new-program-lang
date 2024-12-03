@@ -78,8 +78,11 @@ public class Parser {
     private FactorNode factor() {
         if (currentToken.getType() == Token.Type.LEFT_PARENTH) {
             match(Token.Type.LEFT_PARENTH);
+            // System.out.println(currentToken.getType());
             ExpressionNode e = expression();
+            // System.out.println(currentToken.getType());
             match(Token.Type.RIGHT_PARENTH);
+            // System.out.println(currentToken.getType());
             return new ParenFactorNode(e);
         } else if (currentToken.getType() == Token.Type.SUBTRACTION) {
             match(Token.Type.SUBTRACTION);
@@ -119,8 +122,14 @@ public class Parser {
     // < Number > ::= Int-Lit
     private int number() {
         if (currentToken.getType() == Token.Type.INT_LIT) {
-            match(Token.Type.INT_LIT);
-            return Integer.parseInt(currentToken.getLexeme());
+            try {
+                int numtoReturn = Integer.parseInt(currentToken.getLexeme());
+                match(Token.Type.INT_LIT);
+                return numtoReturn;
+            } catch (Exception e) {
+                System.out.println(currentToken.getType() == Token.Type.INT_LIT);
+                return -1;
+            }
         } else {
             throw new RuntimeException("Syntax error: expecting number at " + currentToken.getRowNumber() + ":"
                     + currentToken.getColNumber());

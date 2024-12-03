@@ -1,5 +1,6 @@
 import main.LexicalAnalyzer.LexicalAnalyzer;
 import main.parser.*;
+import main.Token.Token;
 
 import java.io.File;
 import java.io.FileReader;
@@ -15,12 +16,15 @@ import java.util.ArrayList;
 //    - must be in src directory or else will have to change file paths
 // // #########################################
 
+//Missing File handling on line 58
+
 public class Main {
     public static void main(String[] args) {
         try {
 
             // use file from command Line
             // missing file argument caught at catch block down below
+
             File file = new File(args[0]);
             FileReader sc = new FileReader(file);
 
@@ -42,6 +46,20 @@ public class Main {
 
             LexicalAnalyzer first = new LexicalAnalyzer(expression);
             // get tokens
+
+            // first.printTokens();
+
+            // ArrayList<Token> list = first.getTokenList();
+            // for (int i = 0; i < list.size(); i++) {
+            // System.out.println(list.get(i).getType());
+            //
+            // }
+            // System.out.println("+++++++++++++");
+            //
+            // for (int i = 0; i < list.size(); i++) {
+            // System.out.println(first.getToken().getType());
+            //
+            // }
 
             // Parser creation
             Parser parser = new Parser(first);

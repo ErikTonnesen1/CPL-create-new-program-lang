@@ -14,11 +14,13 @@ public class LexicalAnalyzer {
     private String source;
     private int index;
     private ArrayList<Token> tokens = new ArrayList<Token>();
+    private int currentIndex;
 
     // constructor
     public LexicalAnalyzer(String sourceCode) {
         this.source = sourceCode;
         this.index = 0;
+        this.currentIndex = 0;
 
         findAllTokens();
     }
@@ -27,26 +29,9 @@ public class LexicalAnalyzer {
     // code to be ready for a parser's getToken call
     public void findAllTokens() {
         // parse through source string
-        boolean eos_find = false;
-
         for (int i = this.index; i < this.source.length(); i++) {
-            // if whitespace, do nothing
-            if (this.source.charAt(i) == ';') {
 
-                /*****************************
-                 * ; is not a valid character in
-                 * our grammar
-                 */
-                // if (i != this.source.length() - 1){
-                // throw new IllegalArgumentException("Improper end of line at row: 0 col: " +
-                // i);
-                // }else {
-                String lexeme = String.valueOf(this.source.charAt(i));
-                createToken(lexeme, 0, i);
-                eos_find = true;
-                // }
-
-            } else if (this.source.charAt(i) == ' ') {
+            if (this.source.charAt(i) == ' ' || this.source.charAt(i) == '\n') {
 
                 // nothing
 
@@ -85,9 +70,8 @@ public class LexicalAnalyzer {
                 createToken(nonIntToken, 0, i);
             }
         }
-        if (!eos_find) {
-            throw new RuntimeException("Missing End of line token (;)");
-        }
+        // end of expression
+        createToken("EOS", 0, this.source.length());
 
     }
 
@@ -122,23 +106,22 @@ public class LexicalAnalyzer {
                 Token token = new Token(Lexeme, Token.Type.RIGHT_PARENTH, row, column);
                 tokens.add(token);
 
-            } else if (Lexeme.equals(";")) {
-                /***********************
-                 * ???
-                 */
-                Token token = new Token("EOS", Token.Type.EOS_TOKEN, row, column);
-                tokens.add(token);
-
             } else {
                 // throw exception
-                throw new IllegalArgumentException("Token Type is Invalid at index: " + column);
+                throw new IllegalArgumentException(
+                        "[Token Identification] Token Type is Invalid at index: " + column + ": " + Lexeme);
             }
         } else if (isInteger(Lexeme)) {
             Token token = new Token(Lexeme, Token.Type.INT_LIT, row, column);
             tokens.add(token);
+        } else if (Lexeme.equals("EOS")) {
+            Token token = new Token("EOS", Token.Type.EOS_TOKEN, row, column);
+            tokens.add(token);
+
         } else {
             // throw exception
-            throw new IllegalArgumentException("Token Type is Invalid at index:  " + column);
+            throw new IllegalArgumentException(
+                    "[Token Length > 1] Token Type is Invalid at index:  " + column + ": " + Lexeme);
         }
     }
 
@@ -155,17 +138,22 @@ public class LexicalAnalyzer {
 
     // returns a token per method call as required
     public Token getToken() {
-        Token nextToken = tokens.get(0);
-        tokens.remove(0);
-        return nextToken;
+        if (currentIndex < tokens.size()) {
+            Token nextToken = tokens.get(currentIndex);
+            currentIndex++;
+            return nextToken;
+        } else {
+            return null;
+        }
 
     }
 
     // used for testing purposes
     public void printTokens() {
         for (int i = 0; i < tokens.size(); i++) {
-            System.out.println("Tokens: " + tokens.get(i).getLexeme() + ", ");
+            System.out.println("Tokens: " + tokens.get(i).getType() + ", ");
         }
+        System.out.println(tokens.size());
     }
 
     // getters and setters
@@ -185,6 +173,10 @@ public class LexicalAnalyzer {
     public void setIndex(int newIndex) {
         this.index = newIndex;
 
+    }
+
+    public ArrayList<Token> getTokenList() {
+        return tokens;
     }
 
     /***************************************
