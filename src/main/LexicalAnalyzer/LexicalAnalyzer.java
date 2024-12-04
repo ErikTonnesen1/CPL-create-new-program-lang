@@ -87,7 +87,7 @@ public class LexicalAnalyzer {
                         // System.out.println(assign);
                         createToken(assign, 0, i);
                         i = i + 2;
-                        System.out.println(this.source.charAt(i));
+                        // System.out.println(this.source.charAt(i));
                     }
 
                 } else {
