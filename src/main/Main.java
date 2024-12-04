@@ -52,9 +52,10 @@ public class Main {
             // Parser creation
             Parser parser = new Parser(first, newMemory);
 
-            System.out.println("**********LEXICAL ANALYZER************");
-            first.printTokens();
-            System.out.println("**********LEXICAL ANALYZER************\n\n");
+            // For testing purposes
+            // System.out.println("**********LEXICAL ANALYZER************");
+            // first.printTokens();
+            // System.out.println("**********LEXICAL ANALYZER************");
             // returns valid or invalid code segment
             parser.parse();
 

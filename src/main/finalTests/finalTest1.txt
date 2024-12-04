@@ -1,0 +1,1 @@
+input twenty display twenty twenty <- 100 display twenty

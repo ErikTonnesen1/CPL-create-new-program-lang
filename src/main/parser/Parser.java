@@ -29,7 +29,9 @@ public class Parser {
     public void parse() {
         try {
             ProgramNode root = program();
+            System.out.println("********Output*******\n");
             root.evaluate();
+            System.out.println();
             // if (this.parenthesisCount != 0) {
             // throw new RuntimeException("Unclosed parenthesis pair: " + parenthesisCount);
             // } else {

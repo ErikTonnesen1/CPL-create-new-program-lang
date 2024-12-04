@@ -67,7 +67,6 @@ public class LexicalAnalyzer {
             } else if (!Character.isDigit(this.source.charAt(i))) {
                 // multi length string = identifier or keyword
                 // 1. find full string
-                // 2. if string.equals(assign input, display) = keyword
                 if (i != this.source.length() - 1 && !Character.isDigit(this.source.charAt(i + 1))) {
                     int findWholeString = i;
                     while ((findWholeString + 1) <= this.source.length() - 1
@@ -77,6 +76,7 @@ public class LexicalAnalyzer {
                         findWholeString++;
                     }
                     String wholeString = this.source.substring(i, findWholeString);
+                    // System.out.println(wholeString);
                     i = findWholeString - 1;
                     createToken(wholeString, 0, i);
 
