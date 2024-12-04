@@ -1,0 +1,1 @@
+ratio <-  ( 2 * 3 + 10 ) / 8 display ratio input ratio display ratio

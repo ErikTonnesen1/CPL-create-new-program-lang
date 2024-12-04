@@ -67,22 +67,33 @@ public class LexicalAnalyzer {
             } else if (!Character.isDigit(this.source.charAt(i))) {
                 // multi length string = identifier or keyword
                 // 1. find full string
-                if (i != this.source.length() - 1 && !Character.isDigit(this.source.charAt(i + 1))) {
+                if (i != this.source.length() - 1 && Character.isLetterOrDigit(this.source.charAt(i + 1))) {
                     int findWholeString = i;
                     while ((findWholeString + 1) <= this.source.length() - 1
-                            && !Character.isDigit(this.source.charAt(findWholeString))
+                            && Character.isLetterOrDigit(this.source.charAt(findWholeString))
                             && this.source.charAt(findWholeString) != ' '
                             && this.source.charAt(findWholeString) != '\n') {
                         findWholeString++;
                     }
                     String wholeString = this.source.substring(i, findWholeString);
                     // System.out.println(wholeString);
-                    i = findWholeString - 1;
+                    // System.out.println(wholeString);
                     createToken(wholeString, 0, i);
+                    i = findWholeString - 1;
+
+                } else if (i != this.source.length() - 1 && this.source.charAt(i) == '<') {
+                    if (this.source.charAt(i + 1) == '-') {
+                        String assign = this.source.substring(i, i + 2);
+                        // System.out.println(assign);
+                        createToken(assign, 0, i);
+                        i = i + 2;
+                        System.out.println(this.source.charAt(i));
+                    }
 
                 } else {
                     String nonIntToken = Character.toString(this.source.charAt(i));
 
+                    // System.out.println(nonIntToken);
                     createToken(nonIntToken, 0, i);
                 }
             }
@@ -162,7 +173,7 @@ public class LexicalAnalyzer {
         } else {
             // throw exception
             throw new IllegalArgumentException(
-                    "[Token Length > 1] Token Type is Invalid at index:  " + column + ": " + Lexeme);
+                    "[Token Length > 1] Token Type is Invalid at index:  " + column);
         }
     }
 

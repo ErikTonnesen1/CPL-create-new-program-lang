@@ -15,7 +15,7 @@ public class Memory {
     }
 
     public int retrieve(String id) {
-        return memory.getOrDefault(id, 0);
+        return memory.getOrDefault(id.toLowerCase(), 0);
 
     }
 
