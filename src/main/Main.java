@@ -1,6 +1,7 @@
 import main.LexicalAnalyzer.LexicalAnalyzer;
 import main.parser.*;
 import main.Token.Token;
+import main.Memory.Memory;
 
 import java.io.File;
 import java.io.FileReader;
@@ -45,30 +46,32 @@ public class Main {
             System.out.println("");
 
             LexicalAnalyzer first = new LexicalAnalyzer(expression);
+            Memory newMemory = new Memory();
             // get tokens
 
-            first.printTokens();
-
             // Parser creation
-            Parser parser = new Parser(first);
+            Parser parser = new Parser(first, newMemory);
 
+            System.out.println("**********LEXICAL ANALYZER************");
+            first.printTokens();
+            System.out.println("**********LEXICAL ANALYZER************\n\n");
             // returns valid or invalid code segment
             parser.parse();
 
             // file passing exceptions
         } catch (IOException e) {
             System.out.println("File not Found");
-
-            // EOS token handling
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("\n*******ERROR***********");
-            System.out.println("Missing EOS token in File (space).");
-            System.out.println("*******ERROR***********\n");
-            System.out.println(e.getMessage());
-
         }
-
     }
+
+    // // EOS token handling
+    // } catch (IndexOutOfBoundsException e) {
+    // System.out.println("\n*******ERROR***********");
+    // System.out.println("Missing EOS token in File (space).");
+    // System.out.println("*******ERROR***********\n");
+    // System.out.println(e.getMessage());
+    //
+    // }
 
     // turning Arraylist of chars into one string
     public static String getStringRepresentation(ArrayList<Character> list) {

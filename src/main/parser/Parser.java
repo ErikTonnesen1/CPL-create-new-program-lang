@@ -2,33 +2,40 @@ package main.parser;
 
 import main.Token.Token;
 import main.Token.Token.Type;
+
+import java.beans.Expression;
+
 import main.LexicalAnalyzer.LexicalAnalyzer;
 import main.nonterminals.*;
+import main.Memory.Memory;
 
 public class Parser {
 
     private Token currentToken;
     private LexicalAnalyzer lexanyzer;
     private int parenthesisCount;
+    private Memory memory;
 
     // constructor
-    public Parser(LexicalAnalyzer lex) {
+    public Parser(LexicalAnalyzer lex, Memory mem) {
 
         this.currentToken = lex.getToken();
         this.lexanyzer = lex;
+        this.memory = mem;
         parenthesisCount = 0;
     }
 
     // controller class to print any exceptions found when parsing
     public void parse() {
         try {
-            ExpressionNode root = expression();
-            if (this.parenthesisCount != 0) {
-                throw new RuntimeException("Unclosed parenthesis pair: " + parenthesisCount);
-            } else {
-                System.out.println("Code is valid");
-                System.out.println("Output: " + root.evaluate());
-            }
+            ProgramNode root = program();
+            root.evaluate();
+            // if (this.parenthesisCount != 0) {
+            // throw new RuntimeException("Unclosed parenthesis pair: " + parenthesisCount);
+            // } else {
+            // System.out.println("Code is valid");
+            // System.out.println("Output: " + root.evaluate());
+            // }
 
         } catch (Exception e) {
             System.out.println(e);
@@ -37,6 +44,75 @@ public class Parser {
 
     }
 
+    // Assignment 9 implementation
+
+    // <Program> ::= <Stmt_List>
+    private ProgramNode program() {
+        ProgramNode p = stmnt_list();
+        return p;
+    }
+
+    // <Stmt_List> ::= <Statement> <Stmt_List> | <Statement>
+    private StatementListNode stmnt_list() {
+        if (currentToken.getType() == Token.Type.EOS_TOKEN) {
+            return null;
+        }
+        StatementNode s = statement();
+        if (currentToken.getType() == Token.Type.ID || currentToken.getType() == Token.Type.INPUT
+                || currentToken.getType() == Token.Type.DISPLAY || currentToken.getType() == Token.Type.EOS_TOKEN) {
+            // match(currentToken.getType());
+            StatementListNode sl = stmnt_list();
+            return new StatementListNode(s, sl);
+        } else {
+            // return new StatementListNode(s, null);
+            throw new RuntimeException("[Statement List] : Unexpected Token: " + currentToken.getType());
+        }
+
+    }
+
+    // < Statement > ::= <Assn_Stmt > | <Display_Stmt> | <Input_Stmt>
+    private StatementNode statement() {
+        if (currentToken.getType() == Token.Type.ID) {
+            return assn_stmt();
+        }
+        if (currentToken.getType() == Token.Type.DISPLAY) {
+            return display_stmt();
+        }
+        if (currentToken.getType() == Token.Type.INPUT) {
+            return input_stmt();
+        } else {
+            throw new RuntimeException("[Statement Node] : Unexpected Token: " + currentToken.getType());
+
+        }
+    }
+
+    // <Assn_Stmt> ::= Id “<-” <Expression>
+    private AssignmentNode assn_stmt() {
+        String id = currentToken.getLexeme();
+        match(Token.Type.ID);
+        match(Token.Type.ASSIGN);
+        ExpressionNode e = expression();
+        return new AssignmentNode(id, memory, e);
+
+    }
+
+    // <Display_Stmt> ::= “display” Id
+    private DisplayNode display_stmt() {
+        match(Token.Type.DISPLAY);
+        String id = currentToken.getLexeme();
+        match(Token.Type.ID);
+        return new DisplayNode(id, memory);
+    }
+    // <Input_Stmt> ::= “input” Id
+
+    private InputNode input_stmt() {
+        match(Token.Type.INPUT);
+        String id = currentToken.getLexeme();
+        match(Token.Type.ID);
+        return new InputNode(id, memory);
+    }
+
+    // From Assignment 8 and before
     // code created from pseudo-code template
 
     // < Expression > ::= <Term> <Expression_Prime>
@@ -91,9 +167,14 @@ public class Parser {
         } else if (currentToken.getType() == Token.Type.INT_LIT) {
             int l = number();
             return new NumNode(l);
+        } else if (currentToken.getType() == Token.Type.ID) {
+            // do something here
+            String id = currentToken.getLexeme();
+            match(Token.Type.ID);
+            return new IDNode(id, memory);
         } else {
-            throw new RuntimeException("Syntax error: unexpected character at " + currentToken.getRowNumber() + ":"
-                    + currentToken.getColNumber());
+            throw new RuntimeException("[Factor Node] : Unexpected Token: " + currentToken.getType() + " at "
+                    + currentToken.getRowNumber() + ":" + currentToken.getColNumber());
         }
 
     }
@@ -149,7 +230,7 @@ public class Parser {
                             + currentToken.getRowNumber() + ":" + currentToken.getColNumber());
 
         } else {
-            System.out.println(currentToken.getType());
+            // System.out.println(currentToken.getType());
             currentToken = lexanyzer.getToken();
         }
 

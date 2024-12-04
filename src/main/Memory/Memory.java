@@ -11,11 +11,15 @@ public class Memory {
     }
 
     public void store(String id, int value) {
-        memory.put(id, value);
+        memory.put(id.toLowerCase(), value);
     }
 
     public int retrieve(String id) {
         return memory.getOrDefault(id, 0);
 
+    }
+
+    public boolean contains(String id) {
+        return memory.containsValue(id);
     }
 }

@@ -72,12 +72,12 @@ public class LexicalAnalyzer {
                     int findWholeString = i;
                     while ((findWholeString + 1) <= this.source.length() - 1
                             && !Character.isDigit(this.source.charAt(findWholeString))
-                            && this.source.charAt(findWholeString) != ' ') {
+                            && this.source.charAt(findWholeString) != ' '
+                            && this.source.charAt(findWholeString) != '\n') {
                         findWholeString++;
                     }
                     String wholeString = this.source.substring(i, findWholeString);
                     i = findWholeString - 1;
-                    System.out.println(wholeString);
                     createToken(wholeString, 0, i);
 
                 } else {
@@ -135,10 +135,14 @@ public class LexicalAnalyzer {
         } else if (isInteger(Lexeme)) {
             Token token = new Token(Lexeme, Token.Type.INT_LIT, row, column);
             tokens.add(token);
+        } else if (Lexeme.equals("EOS")) {
+            Token token = new Token("EOS", Token.Type.EOS_TOKEN, row, column);
+            tokens.add(token);
+
         } else if (Lexeme.length() >= 2) {
             // statements tokens
             switch (Lexeme.toLowerCase()) {
-                case "assign":
+                case "<-":
                     Token assignToken = new Token(Lexeme, Token.Type.ASSIGN, row, column);
                     tokens.add(assignToken);
                     break;
@@ -155,10 +159,6 @@ public class LexicalAnalyzer {
                     tokens.add(token);
                     break;
             }
-        } else if (Lexeme.equals("EOS")) {
-            Token token = new Token("EOS", Token.Type.EOS_TOKEN, row, column);
-            tokens.add(token);
-
         } else {
             // throw exception
             throw new IllegalArgumentException(
@@ -192,7 +192,7 @@ public class LexicalAnalyzer {
     // used for testing purposes
     public void printTokens() {
         for (int i = 0; i < tokens.size(); i++) {
-            System.out.println("Tokens: " + tokens.get(i).getType() + ", ");
+            System.out.println("Tokens: " + tokens.get(i).getType() + ", " + tokens.get(i).getLexeme());
         }
         System.out.println(tokens.size());
     }
